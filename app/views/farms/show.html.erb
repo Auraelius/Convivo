@@ -17,8 +17,12 @@
 
 <p>
   <b>Organic Certifier:</b>
-  <%=h @farm.organic_certifier.name %>
-</p>
+  <% if @farm.organic_certifier %>
+        <%=h @farm.organic_certifier.name %>
+      <% else %>
+        Not certified
+      <% end %>
+ </p>
 
 <p>
   <b>Latitude:</b>
