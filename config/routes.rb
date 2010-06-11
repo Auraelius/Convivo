@@ -1,4 +1,12 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :organic_certifiers
+
+  map.resources :farmers
+
+  map.resources :farms
+
+  map.resources :washing_stations
+
   # The priority is based upon order of creation: first created -> highest priority.
 
   # Sample of regular route:
