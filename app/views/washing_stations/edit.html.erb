@@ -1,4 +1,4 @@
-<h1>Editing washing_station</h1>
+<h1>Editing washing station</h1>
 
 <% form_for(@washing_station) do |f| %>
   <%= f.error_messages %>
@@ -11,10 +11,22 @@
     <%= f.label :code %><br />
     <%= f.text_field :code %>
   </p>
+
+  <p>
+    <%= f.label :farmer, "Farmers (change the washing station for a given farmer on the farmer's page)" %>
+    <ul>
+	  	<% for farmer in @washing_station.farmers %>
+	      <li><%= link_to farmer.name, edit_farmer_path(farmer) %>  </li>  
+		  <% end %>
+	  </ul>
+ </p>
+
+
   <p>
     <%= f.submit 'Update' %>
   </p>
 <% end %>
 
 <%= link_to 'Show', @washing_station %> |
-<%= link_to 'Back', washing_stations_path %>
+<%= link_to 'List', washing_stations_path %> |
+<%= link_to 'Back', :back %>

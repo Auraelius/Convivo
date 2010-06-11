@@ -1,8 +1,29 @@
+<h2>Farmer details</h2>
+
 <p>
   <b>Name:</b>
   <%=h @farmer.name %>
 </p>
 
+ <p>
+   <b>Farms:</b>
+   <ul>
+	  	<% for farm in @farmer.farms %>
+	      <li><%= link_to farm.name, farm %>  </li>  
+		  <% end %>
+	  </ul>
+</p>
+
+<p>
+	<b>Washing Station:</b>
+  <% if @farmer.washing_station %>
+    <%=h link_to @farmer.washing_station.name, @farmer.washing_station %>
+  <% else %>
+    None.
+  <% end %>
+</p>
+
 
 <%= link_to 'Edit', edit_farmer_path(@farmer) %> |
-<%= link_to 'Back', farmers_path %>
+<%= link_to 'List', farmers_path %> |
+<%= link_to 'Back', :back %>

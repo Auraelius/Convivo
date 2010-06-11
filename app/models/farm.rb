@@ -1,5 +1,11 @@
+
+
+class Farm < ActiveRecord::Base
+  belongs_to :organic_certifier		
+	belongs_to :farmer
+end
+
 # == Schema Information
-# Schema version: 20100611181230
 #
 # Table name: farms
 #
@@ -15,7 +21,3 @@
 #  updated_at           :datetime
 #
 
-class Farm < ActiveRecord::Base
-  belongs_to :organic_certifier		
-	belongs_to :farmer
-end

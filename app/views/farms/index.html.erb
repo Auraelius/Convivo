@@ -1,26 +1,35 @@
-<h1>Listing farms</h1>
+<h2>Our farms</h2>
 
-<table>
+<table class="simple_index">
   <tr>
     <th>Name</th>
+    <th>Farmer</th>
     <th>Organic</th>
+    <th>Certifier</th>
     <th>Latitude</th>
     <th>Longitude</th>
     <th>Altitude</th>
-    <th>Certifier</th>
+    <th colspan=3>Commands</th>
+
   </tr>
 
 <% @farms.each do |farm| %>
   <tr>
     <td><%=h farm.name %></td>
+    <td><% if farm.farmer %>
+	        <%=h farm.farmer.name %>
+	      <% end %>
+	  </td>
     <td><%=h farm.organic %></td>
+    <td><% if farm.organic_certifier %>
+	        <%=h farm.organic_certifier.name %>
+	      <% else %>
+	        Not certified
+	      <% end %>
+	  </td>
     <td><%=h farm.latitude %></td>
     <td><%=h farm.longitude %></td>
     <td><%=h farm.altitude %></td>
-    <td><% if farm.organic_certifier %>
-	           <%=h farm.organic_certifier.name %>
-	      <% end %>
-	  </td>
     <td><%= link_to 'Show', farm %></td>
     <td><%= link_to 'Edit', edit_farm_path(farm) %></td>
     <td><%= link_to 'Destroy', farm, :confirm => 'Are you sure?', :method => :delete %></td>

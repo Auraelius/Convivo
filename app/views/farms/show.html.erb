@@ -1,11 +1,23 @@
+<h2>Farm details</h2>
+
 <p>
   <b>Name:</b>
   <%=h @farm.name %>
 </p>
 
 <p>
+  <b>Farmer:</b>
+  <%=h @farm.farmer.name %>
+</p>
+
+<p>
   <b>Organic:</b>
   <%=h @farm.organic %>
+</p>
+
+<p>
+  <b>Organic Certifier:</b>
+  <%=h @farm.organic_certifier.name %>
 </p>
 
 <p>
@@ -25,4 +37,5 @@
 
 
 <%= link_to 'Edit', edit_farm_path(@farm) %> |
-<%= link_to 'Back', farms_path %>
+<%= link_to 'List', farms_path %> |
+<%= link_to 'Back', :back %>

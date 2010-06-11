@@ -1,15 +1,22 @@
-<h1>Listing organic_certifiers</h1>
+<h2>Our organic certifiers</h2>
 
-<table>
+<table class="simple_index">
   <tr>
     <th>Name</th>
     <th>Code</th>
+    <th>Certified Farms</th>
+    <th colspan=3>Commands</th>
   </tr>
 
 <% @organic_certifiers.each do |organic_certifier| %>
   <tr>
     <td><%=h organic_certifier.name %></td>
     <td><%=h organic_certifier.code %></td>
+    <td>
+			<% for farm in organic_certifier.farms %>
+  		  <%=h farm.name %>  <br/>  
+			<% end %>
+    </td>
     <td><%= link_to 'Show', organic_certifier %></td>
     <td><%= link_to 'Edit', edit_organic_certifier_path(organic_certifier) %></td>
     <td><%= link_to 'Destroy', organic_certifier, :confirm => 'Are you sure?', :method => :delete %></td>

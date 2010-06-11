@@ -52,3 +52,127 @@ a:hover { color: #fff; background-color:#000; }
   list-style: square;
 }
 
+/* START:notice */
+#notice {
+  border: 2px solid red;
+  padding: 1em;
+  margin-bottom: 2em;
+  background-color: #f0f0f0;
+  font: bold sans-serif;
+}
+/* END:notice */
+
+/* Debug Style */
+
+.debug_dump {
+  text-align: left;
+  border-top: 1px dashed black;
+  background: #ccc;
+  margin: 0;
+  padding: 0.5em;
+}
+
+#debug { 
+  margin-top: 1em; 
+  margin-left: auto;
+  text-align: center; 
+  padding: 1em;
+} 
+#debug a, #debug a.visited { 
+  text-decoration: none; 
+  color: blue; 
+} 
+fieldset.debug_info { 
+  
+  text-align: left; 
+  margin: 1em; 
+  background: #eee; 
+} 
+
+/* Error Reporting Styles */ 
+.fieldWithErrors { 
+  margin: 2px; 
+  padding: 2px; 
+  background-color: red; 
+  display: table; 
+} 
+
+#errorExplanation { 
+  border: 2px solid red; 
+  padding: 7px; 
+  padding-bottom: 12px; 
+  margin-bottom: 20px; 
+  background-color: #f0f0f0; 
+} 
+
+#errorExplanation h2 { 
+  text-align: left; 
+  font-weight: bold; 
+  padding: 5px 5px 5px 15px; 
+  font-size: 12pt; 
+  margin: -7px; 
+  background-color: #c00; 
+  color: #fff; 
+}
+ 
+#errorExplanation p { 
+  color: #333; 
+  margin-bottom: 0; 
+  padding: 5px; 
+} 
+
+#errorExplanation ul li { 
+  font-size: 11pt; 
+  list-style: square; 
+} 
+
+/* Flash Notice Style */ 
+# { 
+  border: 1px solid green; 
+  padding: 1em; 
+  margin: 1em; 
+  margin-bottom: 2em; 
+  background-color: lightgray; 
+  font: bold smaller sans-serif; 
+} 
+
+
+.clear {clear: both;}
+
+
+  table.simple_index {
+  	border-width: 1px 1px 1px 1px;
+  	border-spacing: 0px;
+  	border-style: solid solid solid solid;
+  	border-color: gray gray gray gray;
+  	border-collapse: collapse;
+  	background-color: rgb(255, 255, 240);
+  }
+  table.simple_index th {
+  	border-width: 1px 1px 1px 1px;
+  	padding: 4px 4px 4px 4px;
+  	border-style: dotted dotted dotted dotted;
+  	border-color: black black black black;
+  	background-color: rgb(240, 240, 240);;
+  	-moz-border-radius: 0px 0px 0px 0px;
+  }
+  table.simple_index td {
+  	border-width: 1px 1px 1px 1px;
+  	padding: 4px 4px 4px 4px;
+  	border-style: dotted dotted dotted dotted;
+  	border-color: gray gray gray gray;
+  	background-color: white;
+  	-moz-border-radius: 0px 0px 0px 0px;
+  }
+  
+  #help_area {
+ 
+  	background-color:  rgb(245, 245, 245);
+  	
+    font-style:italic;
+    padding: 1em;
+  }
+  
+  #group_list {
+    padding: 1em;
+  }

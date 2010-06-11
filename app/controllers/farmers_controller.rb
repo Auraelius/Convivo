@@ -25,7 +25,7 @@ class FarmersController < ApplicationController
   # GET /farmers/new.xml
   def new
     @farmer = Farmer.new
-
+    @washing_stations = WashingStation.find(:all, :order => "name")
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @farmer }
@@ -35,6 +35,7 @@ class FarmersController < ApplicationController
   # GET /farmers/1/edit
   def edit
     @farmer = Farmer.find(params[:id])
+    @washing_stations = WashingStation.find(:all, :order => "name")
   end
 
   # POST /farmers

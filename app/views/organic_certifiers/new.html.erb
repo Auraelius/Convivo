@@ -1,4 +1,4 @@
-<h1>New organic_certifier</h1>
+<h2>New organic_certifier</h2>
 
 <% form_for(@organic_certifier) do |f| %>
   <%= f.error_messages %>
@@ -16,4 +16,5 @@
   </p>
 <% end %>
 
-<%= link_to 'Back', organic_certifiers_path %>
+<%= link_to 'List', organic_certifiers_path %> |
+<%= link_to 'Back', :back %>

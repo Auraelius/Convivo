@@ -1,4 +1,4 @@
-<h1>Editing farmer</h1>
+<h2>Editing farmer</h2>
 
 <% form_for(@farmer) do |f| %>
   <%= f.error_messages %>
@@ -7,10 +7,26 @@
     <%= f.label :name %><br />
     <%= f.text_field :name %>
   </p>
+
+  <p>
+    <%= f.label :farm, "Farms (change the farmer for a given farm on the farm page)" %>
+    <ul>
+	  	<% for farm in @farmer.farms %>
+	      <li><%= link_to farm.name, edit_farm_path(farm) %>  </li>  
+		  <% end %>
+	  </ul>
+ </p>
+
+  <p>
+    <%= f.label :washing_station %><br />
+    <%=  f.collection_select(:washing_station_id, @washing_stations, :id, :name, {:prompt => true}) %>
+  </p>
+
   <p>
     <%= f.submit 'Update' %>
   </p>
 <% end %>
 
 <%= link_to 'Show', @farmer %> |
-<%= link_to 'Back', farmers_path %>
+<%= link_to 'List', farmers_path %> |
+<%= link_to 'Back', :back %> 

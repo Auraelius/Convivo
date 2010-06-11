@@ -1,4 +1,4 @@
-<h1>Editing farm</h1>
+<h2>Editing farm</h2>
 
 <% form_for(@farm) do |f| %>
   <%= f.error_messages %>
@@ -7,9 +7,19 @@
     <%= f.label :name %><br />
     <%= f.text_field :name %>
   </p>
+
+  <p>
+    <%= f.label :farmer %><br />
+    <%=  f.collection_select(:farmer_id, @farmers, :id, :name, {:prompt => true}) %>
+  </p>
+
   <p>
     <%= f.label :organic %><br />
     <%= f.check_box :organic %>
+  </p>
+  <p>
+    <%= f.label :organic_certifier %><br />
+    <%= f.collection_select(:organic_certifier_id, @certifiers, :id, :name, {:prompt => true}) %>
   </p>
   <p>
     <%= f.label :latitude %><br />
@@ -29,4 +39,5 @@
 <% end %>
 
 <%= link_to 'Show', @farm %> |
-<%= link_to 'Back', farms_path %>
+<%= link_to 'List', farms_path %> |
+<%= link_to 'Back', :back %>

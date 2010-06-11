@@ -1,3 +1,4 @@
+<h2>Washing station details</h2>
 <p>
   <b>Name:</b>
   <%=h @washing_station.name %>
@@ -8,6 +9,21 @@
   <%=h @washing_station.code %>
 </p>
 
+<p>
+  <b>Farmers:</b>
+
+    <% if @washing_station.farmers.count == 0 %>
+       None
+    <% else %>
+      <ul>
+			  <% for farmer in @washing_station.farmers %>
+  		    <li><%=h farmer.name %>  </li>  
+			  <% end %>
+			</ul>
+		<% end %>
+</p>
+
 
 <%= link_to 'Edit', edit_washing_station_path(@washing_station) %> |
-<%= link_to 'Back', washing_stations_path %>
+<%= link_to 'List', washing_stations_path %> |
+<%= link_to 'Back', :back %>

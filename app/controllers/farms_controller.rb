@@ -25,7 +25,8 @@ class FarmsController < ApplicationController
   # GET /farms/new.xml
   def new
     @farm = Farm.new
-
+    @certifiers = OrganicCertifier.find(:all, :order => "name")
+    @farmers = Farmer.find(:all, :order => "name")
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @farm }
@@ -35,6 +36,8 @@ class FarmsController < ApplicationController
   # GET /farms/1/edit
   def edit
     @farm = Farm.find(params[:id])
+    @certifiers = OrganicCertifier.find(:all, :order => "name")
+    @farmers = Farmer.find(:all, :order => "name")
   end
 
   # POST /farms

@@ -1,3 +1,5 @@
+<h2>Organic certifier details</h2>
+
 <p>
   <b>Name:</b>
   <%=h @organic_certifier.name %>
@@ -8,6 +10,16 @@
   <%=h @organic_certifier.code %>
 </p>
 
+<p>
+  <b>Farms:</b>
+  <ul>
+		<% for farm in @organic_certifier.farms %>
+		  <li><%=h farm.name %>  </li>  
+		<% end %>
+	</ul>
+</p>
+
 
 <%= link_to 'Edit', edit_organic_certifier_path(@organic_certifier) %> |
-<%= link_to 'Back', organic_certifiers_path %>
+<%= link_to 'List', organic_certifiers_path %> |
+<%= link_to 'Back', :back %>

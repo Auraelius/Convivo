@@ -1,4 +1,4 @@
-<h1>Editing organic_certifier</h1>
+<h2>Editing organic certifier</h2>
 
 <% form_for(@organic_certifier) do |f| %>
   <%= f.error_messages %>
@@ -11,10 +11,21 @@
     <%= f.label :code %><br />
     <%= f.text_field :code %>
   </p>
+
+  <p>
+    <%= f.label :farm, "Farms (change the certifier for a given farm on the farm's page)" %>
+    <ul>
+	  	<% for farm in @organic_certifier.farms %>
+	      <li><%= link_to farm.name, edit_farm_path(farm) %>  </li>  
+		  <% end %>
+	  </ul>
+ </p>	
+	
   <p>
     <%= f.submit 'Update' %>
   </p>
 <% end %>
 
 <%= link_to 'Show', @organic_certifier %> |
-<%= link_to 'Back', organic_certifiers_path %>
+<%= link_to 'List', organic_certifiers_path %> |
+<%= link_to 'Back', :back %>

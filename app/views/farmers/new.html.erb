@@ -1,4 +1,4 @@
-<h1>New farmer</h1>
+<h2>New farmer</h2>
 
 <% form_for(@farmer) do |f| %>
   <%= f.error_messages %>
@@ -7,9 +7,18 @@
     <%= f.label :name %><br />
     <%= f.text_field :name %>
   </p>
+
+  <p>
+    <%= f.label :washing_station %><br />
+    <%=  f.collection_select(:washing_station_id, @washing_stations, :id, :name, {:prompt => true}) %>
+  </p>
+  <p>
+
+
   <p>
     <%= f.submit 'Create' %>
   </p>
 <% end %>
 
-<%= link_to 'Back', farmers_path %>
+<%= link_to 'List', farmers_path %> |
+<%= link_to 'Back', :back %>
