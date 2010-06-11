@@ -1,0 +1,22 @@
+<h1>Listing organic_certifiers</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Code</th>
+  </tr>
+
+<% @organic_certifiers.each do |organic_certifier| %>
+  <tr>
+    <td><%=h organic_certifier.name %></td>
+    <td><%=h organic_certifier.code %></td>
+    <td><%= link_to 'Show', organic_certifier %></td>
+    <td><%= link_to 'Edit', edit_organic_certifier_path(organic_certifier) %></td>
+    <td><%= link_to 'Destroy', organic_certifier, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New organic_certifier', new_organic_certifier_path %>

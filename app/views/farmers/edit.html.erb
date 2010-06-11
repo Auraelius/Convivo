@@ -1,0 +1,16 @@
+<h1>Editing farmer</h1>
+
+<% form_for(@farmer) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @farmer %> |
+<%= link_to 'Back', farmers_path %>
