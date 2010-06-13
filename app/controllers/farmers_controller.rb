@@ -42,6 +42,7 @@ class FarmersController < ApplicationController
   # POST /farmers.xml
   def create
     @farmer = Farmer.new(params[:farmer])
+    @washing_stations = WashingStation.find(:all, :order => "name")
 
     respond_to do |format|
       if @farmer.save
@@ -58,7 +59,8 @@ class FarmersController < ApplicationController
   # PUT /farmers/1.xml
   def update
     @farmer = Farmer.find(params[:id])
-
+    @washing_stations = WashingStation.find(:all, :order => "name")
+ 
     respond_to do |format|
       if @farmer.update_attributes(params[:farmer])
         format.html { redirect_to(@farmer, :notice => 'Farmer was successfully updated.') }

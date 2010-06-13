@@ -1,0 +1,7 @@
+	<!-- Mock up a menu bar with a simple set of links -->
+	<hr>
+		<%= link_to_unless_current ("Farmers", {:controller => "farmers", :action => "index"}) -%> |
+		<%= link_to_unless_current ("Farms", {:controller => "farms", :action => "index"}) -%> |
+		<%= link_to_unless_current ("Organic Certifiers", {:controller => "organic_certifiers", :action => "index"}) -%> |	
+		<%= link_to_unless_current ("Washing Stations", {:controller => "washing_stations", :action => "index"}) -%> |	
+  <hr>

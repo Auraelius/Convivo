@@ -1,0 +1,34 @@
+<!-- debug aids - showing in heroku production environment for demonstration purposes -->
+<!-- javascript toggle not working once I added jquery handlers. Not sure why -->
+<!-- TODO: restore check for Development Environment  before displaying footer -->
+
+		<div id="debug"> 
+
+			<!-- 
+			Development Environment: <br />
+			<a href="#" onclick="Element.toggle('params_debug_info');return false">params</a> | 
+			<a href="#" onclick="Element.toggle('session_debug_info');return false">session</a> |
+			<a href="#" onclick="Element.toggle('env_debug_info');return false">env</a> | 
+			<a href="#" onclick="Element.toggle('request_debug_info');return false">request</a> 
+
+		
+			<fieldset id="params_debug_info" class="debug_info" style="display:none"> 
+				<legend>params</legend> 
+				<%= debug(params) %> 
+			</fieldset> 
+			<fieldset id="session_debug_info" class="debug_info" style="display:none"> 
+				<legend>session</legend> 
+				<%= debug(session) %> 
+			</fieldset> 
+			<fieldset id="env_debug_info" class="debug_info" style="display: none"> 
+				<legend>env</legend> 
+				<%= debug(request.env) %> 
+			</fieldset> 
+			<fieldset id="request_debug_info" class="debug_info" style="display: none"> 
+				<legend>request</legend> 
+				<%= debug(request) %> 
+			</fieldset> 
+			
+			 -->
+		
+		</div> 

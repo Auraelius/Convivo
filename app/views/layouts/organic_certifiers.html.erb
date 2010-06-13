@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-  <title>Convivo v0.01 : <%= controller.controller_name %> : <%= controller.action_name %></title>
+  <title><%= site_name %> <%= site_version %> : <%= controller.controller_name %> : <%= controller.action_name %></title>
   <%= stylesheet_link_tag 'scaffold' %>
   <%= stylesheet_link_tag 'style' %> <!-- for tablesorter -->
 	<%= javascript_include_tag :defaults %>
@@ -27,14 +27,8 @@
 </head>
 <body>
 	
-	<h1>Convivo</h1>
-	<!-- Mock up a menu bar with a simple set of links -->
-	<hr>
-		<%= link_to_unless_current ("Farmers", {:controller => "farmers", :action => "index"}) -%> |
-		<%= link_to_unless_current ("Farms", {:controller => "farms", :action => "index"}) -%> |
-		<%= link_to_unless_current ("Organic Certifiers", {:controller => "organic_certifiers", :action => "index"}) -%> |	
-		<%= link_to_unless_current ("Washing Stations", {:controller => "washing_stations", :action => "index"}) -%> |	
-  <hr>
+	<h1><%= site_name %></h1>
+	<%= render(:partial =>"shared/menu_bar")%>
 
 	<%if flash[:notice] -%>
     <div id="notice"><%= flash[:notice] %></div>
@@ -48,34 +42,6 @@
   <%= yield %>
 
 	<hr>
-	<!-- debug aids - showing in heroku production environment for demonstration purposes -->
-	<!-- TODO: restore check for Development Environment  before displaying footer -->
-		<div id="debug"> 
-
-			Development Environment (organic_certifier layout template): <br />
-			<a href="#" onclick="Element.toggle('params_debug_info');return false">params</a> | 
-			<a href="#" onclick="Element.toggle('session_debug_info');return false">session</a> |
-			<a href="#" onclick="Element.toggle('env_debug_info');return false">env</a> | 
-			<a href="#" onclick="Element.toggle('request_debug_info');return false">request</a> 
-		
-			<fieldset id="params_debug_info" class="debug_info" style="display:none"> 
-				<legend>params</legend> 
-				<%= debug(params) %> 
-			</fieldset> 
-			<fieldset id="session_debug_info" class="debug_info" style="display:none"> 
-				<legend>session</legend> 
-				<%= debug(session) %> 
-			</fieldset> 
-			<fieldset id="env_debug_info" class="debug_info" style="display: none"> 
-				<legend>env</legend> 
-				<%= debug(request.env) %> 
-			</fieldset> 
-			<fieldset id="request_debug_info" class="debug_info" style="display: none"> 
-				<legend>request</legend> 
-				<%= debug(request) %> 
-			</fieldset> 
-		
-		</div> <!-- id="debug" --> 
-
+	<%= render(:partial =>"shared/debug_aids")%>
 </body>
 </html>

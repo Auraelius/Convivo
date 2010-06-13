@@ -13,4 +13,8 @@
 class Farmer < ActiveRecord::Base
   belongs_to :washing_station
   has_many :farms, :dependent => :destroy
+
+  validates_presence_of :name
+
+  # no washing station is required at this time
 end

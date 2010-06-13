@@ -19,8 +19,12 @@
   </p>
 
   <p>
-    <%= f.label :organic_certifier %><br />
-    <%=  f.collection_select(:organic_certifier_id, @certifiers, :id, :name, {:prompt => true}) %>
+    <!-- Only show the organic certifier selector if the organic check box is checked 
+         see jQuery function in layout template -->
+		<div id="selector_for_certifier">
+	    <%= f.label :organic_certifier %><br />
+	    <%=  f.collection_select(:organic_certifier_id, @certifiers, :id, :name, {:prompt => true}) %>
+		</div>
   </p>
 
   <p>

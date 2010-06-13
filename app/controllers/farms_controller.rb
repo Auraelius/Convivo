@@ -45,6 +45,15 @@ class FarmsController < ApplicationController
   def create
     @farm = Farm.new(params[:farm])
 
+    #supply variables for loading selectors
+    @certifiers = OrganicCertifier.find(:all, :order => "name")
+    @farmers = Farmer.find(:all, :order => "name")
+
+    # the farm can't have a certifier if it's not organic
+    if !@farm.organic 
+      @farm.organic_certifier = nil
+    end
+
     respond_to do |format|
       if @farm.save
         format.html { redirect_to(@farm, :notice => 'Farm was successfully created.') }
@@ -61,8 +70,22 @@ class FarmsController < ApplicationController
   def update
     @farm = Farm.find(params[:id])
 
+    #supply variables for loading selectors in case there are errors and we need to render the form again
+    @certifiers = OrganicCertifier.find(:all, :order => "name")
+    @farmers = Farmer.find(:all, :order => "name")
+
+    # the farm can't have a certifier if it's not organic
+    # check the form results -- if organic has been turned off, reset the certifier association
+    new_attributes = params[:farm]
+    
+    if new_attributes["organic"] == "0"
+      new_attributes.merge!(:organic_certifier_id => nil)
+    end
+
+    # and then update the farm record
+
     respond_to do |format|
-      if @farm.update_attributes(params[:farm])
+      if @farm.update_attributes(new_attributes)
         format.html { redirect_to(@farm, :notice => 'Farm was successfully updated.') }
         format.xml  { head :ok }
       else
