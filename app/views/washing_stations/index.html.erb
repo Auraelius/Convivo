@@ -1,31 +1,37 @@
 <h2>Our washing stations</h2>
 
-<table class="simple_index">
-  <tr>
-    <th>Name</th>
-    <th>Code</th>
-    <th>Farmers</th>
-    <th colspan=3>Commands</th>
-  </tr>
+<!-- We use the tablesorter jQuery plugin to manage column sorting -->
+<table id="washing_stationsTable" class="tablesorter">
 
-<% @washing_stations.each do |washing_station| %>
-  <tr>
-    <td><%=h washing_station.name %></td>
-    <td><%=h washing_station.code %></td>
-    <td>
-	    <% if washing_station.farmers.count == 0 %>
-	      None
-	    <% else %>
-				<% for farmer in washing_station.farmers %>
-	  		  <%=h farmer.name %>  <br/>  
-				<% end %>
-			<% end %>
-    </td>
-    <td><%= link_to 'Show', washing_station %></td>
-    <td><%= link_to 'Edit', edit_washing_station_path(washing_station) %></td>
-    <td><%= link_to 'Destroy', washing_station, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
+	<thead>
+	  <tr>
+	    <th>Name</th>
+	    <th>Code</th>
+	    <th>Farmers</th>
+	    <th colspan=3>Commands</th>
+	  </tr>
+	</thead>
+	
+	<tbody>
+		<% @washing_stations.each do |washing_station| %>
+		  <tr>
+		    <td><%=h washing_station.name %></td>
+		    <td><%=h washing_station.code %></td>
+		    <td>
+			    <% if washing_station.farmers.count == 0 %>
+			      None
+			    <% else %>
+						<% for farmer in washing_station.farmers %>
+			  		  <%=h farmer.name %>  <br/>  
+						<% end %>
+					<% end %>
+		    </td>
+		    <td><%= link_to 'Show', washing_station %></td>
+		    <td><%= link_to 'Edit', edit_washing_station_path(washing_station) %></td>
+		    <td><%= link_to 'Destroy', washing_station, :confirm => 'Are you sure?', :method => :delete %></td>
+		  </tr>
+		<% end %>
+	<tbody>
 </table>
 
 <br />

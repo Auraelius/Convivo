@@ -1,33 +1,40 @@
 <h2>Our farmers</h2>
 
-<table class="simple_index">
-  <tr>
-    <th>Name</th>
-    <th>Farms</th>
-    <th>Washing Station</th>
-    <th colspan=3>Commands</th>
-  </tr>
+<!-- We use the tablesorter jQuery plugin to manage column sorting -->
+<table id="farmerTable" class="tablesorter">
+	
+	<thead>
+	  <tr>
+	    <th>Name</th>
+	    <th>Farms</th>
+	    <th>Washing Station</th>
+	    <th colspan=3>Commands</th>
+	  </tr>
+  </thead>
 
-<% @farmers.each do |farmer| %>
-  <tr>
-    <td><%=h farmer.name %></td>
-    <td>
-			<% for farm in farmer.farms %>
-  		  <%=h farm.name %>  <br/>  
-			<% end %>
-    </td>
+	</tbody>
+		<% @farmers.each do |farmer| %>
+		  <tr>
+		    <td><%=h farmer.name %></td>
+		    <td>
+					<% for farm in farmer.farms %>
+		  		  <%=h farm.name %>  <br/>  
+					<% end %>
+		    </td>
 
-    <td>
-      <% if farmer.washing_station %>
-		    <%=h farmer.washing_station.name %>
-		  <% end %>
-		</td>
+		    <td>
+		      <% if farmer.washing_station %>
+				    <%=h farmer.washing_station.name %>
+				  <% end %>
+				</td>
 
-    <td><%= link_to 'Show', farmer %></td>
-    <td><%= link_to 'Edit', edit_farmer_path(farmer) %></td>
-    <td><%= link_to 'Destroy', farmer, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
+		    <td><%= link_to 'Show', farmer %></td>
+		    <td><%= link_to 'Edit', edit_farmer_path(farmer) %></td>
+		    <td><%= link_to 'Destroy', farmer, :confirm => 'Are you sure?', :method => :delete %></td>
+		  </tr>
+		<% end %>
+
+	</tbody>
 </table>
 
 <br />
