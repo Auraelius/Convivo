@@ -1,0 +1,857 @@
+requirements
+1. Data model as described
+2. CRUD actions for user
+3. sortable columns in listings
+4. conditional selection in create/update views for farm
+5. deploy to heroku
+6. push to github - not required by Oscar
+7. record hours 
+8. Log steps
+
+Caution: don't go overboard on test coverage, pretty CSS styling, deployment
+
+Plan:
+
+[X] update ruby & rb-rubygems via macports (due to recent snow leopard upgrade)
+[X] Install postgresql, adjust paths, etc.
+[X] configure pg with user, GUI client, etc.
+[X] verify that rails talks to pg
+[X] infrastructure - git, github, heroku
+[X] deploy test to heroku
+[X] generate convivo app
+[X] infrastructure - rspec, cucumber, autotest, rcov 
+[X] data model & migrations with rspec scaffolding for simple controllers and views
+[X] Add data associations to views, add simple styling, debug aids
+[X] deploy to heroku, github - iteration 1
+[X] find a jquery table widget for sorting listings
+[X] deploy to heroku, github - iteration 2
+[X] conditional forms 
+[X] validations & tests
+[X] check on FireFox, IE7, fix anomolies
+[X] deploy to heroku, github - iteration 3
+[] real rspec & cucumber tests
+[] deploy to heroku, github - iteration 4
+
+
+Log:
+
+20100610 - 0930
+Other client meetings done. Starting work.
+Upgraded mac ports for Snow Leopard. Installing PostgresSQL
+
+[X] update ruby & rb-rubygems via macports (due to recent snow leopard upgrade)
+
+Verified that macports set the PATH var for /opt/local/bin, /opt/local/sbin in the front of $PATH.
+
+ganesh:sh zim$ echo $PATH
+/opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/X11/bin:/usr/local/mysql/bin:/usr/local/ec2-api-tools-1.3-26369/bin
+
+the conf file at /opt/local/etc/macports/macports.conf says the build target architecture is x86_64 but my machine is a core duo (32 bit). We'll see if this bites me later.
+
+ruby version?
+
+ganesh:sh zim$ which ruby
+/opt/local/bin/ruby
+ganesh:sh zim$ ruby -v
+ruby 1.8.7 (2009-06-12 patchlevel 174) [i686-darwin9]
+
+let's make sure it's up to date 
+
+ganesh:sh zim$ sudo port upgrade ruby
+# lots of output
+ganesh:sh zim$ ruby -v
+ruby 1.8.7 (2010-01-10 patchlevel 249) [i686-darwin10]
+ganesh:sh zim$ which gem
+/opt/local/bin/gem
+ganesh:sh zim$ gem -v
+1.3.7
+ganesh:sh zim$ sudo port upgrade rb-rubygems
+# lots of output
+ganesh:sh zim$ gem -v
+1.3.7
+# now postgresql
+
+[] Install postgresql, adjust paths, etc.
+
+ganesh:sh zim$ sudo port install postgresql84 postgresql84-server
+# lots and lots of output, including
+
+###########################################################
+# A startup item has been generated that will aid in
+# starting postgresql84-server with launchd. It is disabled
+# by default. Execute the following command to start it,
+# and to cause it to launch at startup:
+#
+# sudo port load postgresql84-server
+###########################################################
+--->  Installing postgresql84-server @8.4.4_0
+
+To create a database instance, after install do
+ sudo mkdir -p /opt/local/var/db/postgresql84/defaultdb
+ sudo chown postgres:postgres /opt/local/var/db/postgresql84/defaultdb
+ sudo su postgres -c '/opt/local/lib/postgresql84/bin/initdb -D /opt/local/var/db/postgresql84/defaultdb'
+
+To tweak your DBMS, consider increasing kern.sysv.shmmax by adding an increased kern.sysv.shmmax .. to /etc/sysctl.conf
+
+
+
+# setting up user & local storage per http://developer.apple.com/internet/opensource/postgres.html
+# verified that postgres user exists
+ganesh:sh zim$ dscacheutil -q user
+...
+name: postgres
+password: *
+uid: 500
+gid: 500
+dir: /opt/local/var/db/postgresql84
+shell: /bin/sh
+gecos: PostgreSQL-84 Server
+...
+# following directions
+ganesh:sh zim$  sudo mkdir -p /opt/local/var/db/postgresql84/defaultdb
+ganesh:sh zim$  sudo chown postgres:postgres /opt/local/var/db/postgresql84/defaultdb
+ganesh:sh zim$ sudo su postgres -c '/opt/local/lib/postgresql84/bin/initdb -D /opt/local/var/db/postgresql84/defaultdb'
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale en_US.UTF-8.
+The default database encoding has accordingly been set to UTF8.
+The default text search configuration will be set to "english".
+
+fixing permissions on existing directory /opt/local/var/db/postgresql84/defaultdb ... ok
+creating subdirectories ... ok
+selecting default max_connections ... 30
+selecting default shared_buffers ... 2400kB
+creating configuration files ... ok
+creating template1 database in /opt/local/var/db/postgresql84/defaultdb/base/1 ... ok
+initializing pg_authid ... ok
+initializing dependencies ... ok
+creating system views ... ok
+loading system objects' descriptions ... ok
+creating conversions ... ok
+creating dictionaries ... ok
+setting privileges on built-in objects ... ok
+creating information schema ... ok
+vacuuming database template1 ... ok
+copying template1 to template0 ... ok
+copying template1 to postgres ... ok
+
+WARNING: enabling "trust" authentication for local connections
+You can change this by editing pg_hba.conf or using the -A option the
+next time you run initdb.
+
+Success. You can now start the database server using:
+
+    /opt/local/lib/postgresql84/bin/postgres -D /opt/local/var/db/postgresql84/defaultdb
+or
+    /opt/local/lib/postgresql84/bin/pg_ctl -D /opt/local/var/db/postgresql84/defaultdb -l logfile start
+
+ganesh:sh zim$  sudo port load postgresql84-server
+# and I get a warning from the firewall, asking to open up incoming traffic to postgres
+
+# Let's get a GUI client
+# reviewed recommendatons at http://wiki.postgresql.org/wiki/Community_Guide_to_PostgreSQL_GUI_Tools
+# chose to try http://www.pgadmin.org/
+# seems simple enough... logged into localhost, port 5432
+# looks like postgres account has no password. hmmmm....
+# pgdmin3 complains that "The server lacks instrumentation functions" and recommends installing "adminpack":
+
+PostgreSQL 8.2 and above include the instrumentation functions in the "adminpack" contrib module. After the module is installed, you need to create the instrumentation functions in your maintenance database using the admin.sql script (admin81.sql for PostgreSQL 8.1) which are usually located in the pgsql share directory (e.g. /usr/local/pgsql/share) 
+
+# we'll see how far we can get without this.
+
+# need to build the database adapter gem
+# referred to http://www.gregbenedict.com/2009/08/31/installing-postgresql-on-snow-leopard-10-6/,
+# http://railsonpostgresql.com/, and a bunch of others
+
+ganesh:local zim$ sudo -i
+ganesh:~ root# export ARCHFLAGS="-arch i386"
+ganesh:~ root# export PATH=/opt/local/lib/postgresql84/bin:$PATH
+ganesh:~ root# gem install pg -- --with-pgsql-include=/opt/local/include/postgresql84 --with-pgsql-lib=/opt/local/lib/postgresql84
+Building native extensions.  This could take a while...
+Successfully installed pg-0.9.0
+1 gem installed
+Installing ri documentation for pg-0.9.0...
+Installing RDoc documentation for pg-0.9.0...
+ganesh:~ root# exit
+logout
+ganesh:local zim$
+
+# but where did this go?
+ganesh:test zim$ gem list | grep pg
+ganesh:test zim$ 
+
+# It's not where all the other gems are (/opt/local/lib/ruby/gems/1.8), it's been installed under "/Library"
+
+ganesh:gems zim$ sudo -i
+ganesh:~ root# gem list --details pg
+
+*** LOCAL GEMS ***
+
+pg (0.9.0)
+    Author: Michael Granger
+    Homepage: http://bitbucket.org/ged/ruby-pg/
+    Installed at: /Library/Ruby/Gems/1.8
+
+    A Ruby interface to the PostgreSQL RDBMS
+ganesh:~ root# 
+
+# the interactive sudo environment is different from the normal environment
+
+ganesh:~ root# gem environment
+RubyGems Environment:
+  - RUBYGEMS VERSION: 1.3.5
+  - RUBY VERSION: 1.8.7 (2009-06-08 patchlevel 173) [universal-darwin10.0]
+  - INSTALLATION DIRECTORY: /Library/Ruby/Gems/1.8
+  - RUBY EXECUTABLE: /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin/ruby
+  - EXECUTABLE DIRECTORY: /usr/bin
+  - RUBYGEMS PLATFORMS:
+    - ruby
+    - universal-darwin-10
+  - GEM PATHS:
+     - /Library/Ruby/Gems/1.8
+     - /var/root/.gem/ruby/1.8
+     - /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/gems/1.8
+  - GEM CONFIGURATION:
+     - :update_sources => true
+     - :verbose => true
+     - :benchmark => false
+     - :backtrace => false
+     - :bulk_threshold => 1000
+  - REMOTE SOURCES:
+     - http://gems.rubyforge.org/
+ganesh:~ root# exit
+logout
+ganesh:gems zim$ gem environment
+RubyGems Environment:
+  - RUBYGEMS VERSION: 1.3.7
+  - RUBY VERSION: 1.8.7 (2010-01-10 patchlevel 249) [i686-darwin10]
+  - INSTALLATION DIRECTORY: /opt/local/lib/ruby/gems/1.8
+  - RUBY EXECUTABLE: /opt/local/bin/ruby
+  - EXECUTABLE DIRECTORY: /opt/local/bin
+  - RUBYGEMS PLATFORMS:
+    - ruby
+    - x86-darwin-10
+  - GEM PATHS:
+     - /opt/local/lib/ruby/gems/1.8
+     - /Users/zim/.gem/ruby/1.8
+  - GEM CONFIGURATION:
+     - :update_sources => true
+     - :verbose => true
+     - :benchmark => false
+     - :backtrace => false
+     - :bulk_threshold => 1000
+     - :sources => ["http://gems.rubyforge.org", "http://gems.rubyonrails.org", "http://gems.rubyonrails.org", "http://gems.aptana.com", "http://gems.aptana.com"]
+  - REMOTE SOURCES:
+     - http://gems.rubyforge.org
+     - http://gems.rubyonrails.org
+     - http://gems.rubyonrails.org
+     - http://gems.aptana.com
+     - http://gems.aptana.com
+ganesh:gems zim$ 
+
+
+# the path is inverted, putting /usr/bin before /opt/local/bin
+# Could either set the PATH explicitly or edit /etc/paths to include /opt/local/bin and /opt/local/sbin.
+# also cp'd the .gemrc from ~/ to /var/root to pick up additional sources
+
+# Try the gem install again
+
+ganesh:local zim$ sudo -i
+ganesh:~ root# export ARCHFLAGS="-arch i386"
+ganesh:~ root# export PATH=/opt/local/lib/postgresql84/bin:$PATH
+ganesh:~ root# gem install pg -- --with-pgsql-include=/opt/local/include/postgresql84 --with-pgsql-lib=/opt/local/lib/postgresql84
+
+
+
+# let's see if we can make a one-table simple rails app to verify that rails can talk to postgresql
+
+ganesh:sh zim$ rails -d postgresql test
+# lots of output
+# used user postgres in config/database.yml - bad security but I don't have to learn about pg roles and users
+
+ganesh:sh zim$ cd test
+ganesh:test zim$ ls
+README   Rakefile app      config   db       doc      lib      log      public   script   test     tmp      vendor
+ganesh:test zim$ rake db:create
+(in /Users/zim/dev/sh/test)
+ganesh:test zim$ script/generate rspec_scaffold farm name:string organic:boolean latitude:float longitude:float altitude:float
+ganesh:test zim$ rake db:migrate
+(in /Users/zim/dev/sh/test)
+==  CreateFarms: migrating ====================================================
+-- create_table(:farms)
+NOTICE:  CREATE TABLE will create implicit sequence "farms_id_seq" for serial column "farms.id"
+NOTICE:  CREATE TABLE / PRIMARY KEY will create implicit index "farms_pkey" for table "farms"
+   -> 0.0134s
+==  CreateFarms: migrated (0.0135s) ===========================================
+# Using pgadmin3, I see the table has been created
+# Firing up script/server, I can CRUD farms at http://localhost:3000/farms
+
+# 
+# 
+# So, after about 4 hours, the Mac is using macports to run rails and postgresql. Now, to set up the rest of the rails development environment
+
+[X] Install postgresql, adjust paths, etc.
+[X] configure pg with user, passwords, etc.
+[X] verify that rails talks to pg
+
+# Well, git seems to be missing now that I'm up on Snow Leopard, so
+
+ganesh:test zim$  sudo port install git-core +svn +doc +bash_completion +gitweb
+
+# this seems to take an extraordinary amount of time, so I sketch the data model while I'm waiting (see ConvivoDataModel.pdf).
+
+# When it's installed, I init a git repo in the test app, add what's there and make the initial commit.
+# Make a new repo in github "pgtest"
+
+ganesh:test zim$ git config --global user.name "Al Zimmerman"
+ganesh:test zim$ git config --global user.email auraelius@gmail.com
+ganesh:test zim$ git remote add origin git@github.com:Auraelius/pgtest.git
+ganesh:test zim$ git push origin master
+ganesh:test zim$ gem update heroku
+Updating installed gems
+Nothing to update
+ganesh:test zim$ heroku create
+Creating electric-snow-95..... done
+Created http://electric-snow-95.heroku.com/ | git@heroku.com:electric-snow-95.git
+Git remote heroku added
+ganesh:test zim$ 
+ganesh:test zim$ heroku create
+Creating electric-snow-95..... done
+Created http://electric-snow-95.heroku.com/ | git@heroku.com:electric-snow-95.git
+Git remote heroku added
+ganesh:test zim$ git push heroku master
+Counting objects: 102, done.
+Delta compression using up to 2 threads.
+Compressing objects: 100% (85/85), done.
+Writing objects: 100% (102/102), 86.90 KiB, done.
+Total 102 (delta 14), reused 0 (delta 0)
+
+-----> Heroku receiving push
+-----> Rails app detected
+ !     This version of Rails is only supported on the Bamboo stack
+ !     Please migrate your app to Bamboo and push again.
+ !     See http://docs.heroku.com/bamboo for more information
+ !     Heroku push rejected, incompatible Rails version
+
+error: hooks/pre-receive exited with error code 1
+To git@heroku.com:electric-snow-95.git
+ ! [remote rejected] master -> master (pre-receive hook declined)
+error: failed to push some refs to 'git@heroku.com:electric-snow-95.git'
+ganesh:test zim$ heroku info --app electric-snow-95
+=== electric-snow-95
+Web URL:        http://electric-snow-95.heroku.com/
+Git Repo:       git@heroku.com:electric-snow-95.git
+Dynos:          1
+Workers:        0
+Stack:          aspen-mri-1.8.6
+Data size:      0K in 0 table
+Owner:          auraelius@gmail.com
+ganesh:test zim$ 
+
+# OK, following info at http://docs.heroku.com/bamboo
+ganesh:test zim$ mate .gems
+with contents:
+rails -2.3.8
+pg
+
+ganesh:test zim$ heroku stack
+* aspen-mri-1.8.6
+  bamboo-ree-1.8.7
+  bamboo-mri-1.9.1 (beta)
+
+ganesh:test zim$ heroku create --stack bamboo-ree-1.8.7 --remote trybamboo
+Creating vivid-autumn-34..... done
+Created http://vivid-autumn-34.heroku.com/ | git@heroku.com:vivid-autumn-34.git
+Git remote trybamboo added
+ganesh:test zim$ git add .
+ganesh:test zim$ git status
+# On branch master
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#	new file:   .gems
+#
+ganesh:test zim$ git commit -m'added gems spec'
+[master 07a0385] added gems spec
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+ create mode 100644 .gems
+
+ganesh:test zim$ git push trybamboo master
+Counting objects: 4, done.
+Delta compression using up to 2 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 295 bytes, done.
+Total 3 (delta 1), reused 0 (delta 0)
+
+-----> Heroku receiving push
+-----> Rails app detected
+
+-----> Installing gem rails 2.3.8 from http://rubygems.org
+       Successfully installed activesupport-2.3.8
+       Successfully installed activerecord-2.3.8
+       Successfully installed rack-1.1.0
+       Successfully installed actionpack-2.3.8
+       Successfully installed actionmailer-2.3.8
+       Successfully installed activeresource-2.3.8
+       Successfully installed rails-2.3.8
+       7 gems installed
+
+-----> Installing gem pg from http://rubygems.org
+       Building native extensions.  This could take a while...
+       Successfully installed pg-0.9.0
+       1 gem installed
+
+       Compiled slug size is 8.3MB
+-----> Launching......... done
+       http://vivid-autumn-34.heroku.com deployed to Heroku
+
+To git@heroku.com:vivid-autumn-34.git
+   8ec7f8f..07a0385  master -> master
+ganesh:test zim$ 
+
+ganesh:test zim$ heroku info --app vivid-autumn-34
+=== vivid-autumn-34
+Web URL:        http://vivid-autumn-34.heroku.com/
+Git Repo:       git@heroku.com:vivid-autumn-34.git
+Dynos:          1
+Workers:        0
+Repo size:      4M
+Slug size:      8M
+Stack:          bamboo-ree-1.8.7
+Data size:      0K in 0 table
+Owner:          auraelius@gmail.com
+ganesh:test zim$ heroku db:create --app vivid-autumn-34
+Unknown command. Run 'heroku help' for usage information.
+ganesh:test zim$ heroku rake db:create --app vivid-autumn-34
+wlrwnritrm already exists
+(in /disk1/home/slugs/208396_07a0385_d5c7/mnt)
+ganesh:test zim$ heroku rake db:migrate --app vivid-autumn-34
+(in /disk1/home/slugs/208396_07a0385_d5c7/mnt)
+==  CreateFarms: migrating ====================================================
+-- create_table(:farms)
+   -> 0.0134s
+==  CreateFarms: migrated (0.0135s) ===========================================
+
+ganesh:test zim$ heroku info --app vivid-autumn-34
+=== vivid-autumn-34
+Web URL:        http://vivid-autumn-34.heroku.com/
+Git Repo:       git@heroku.com:vivid-autumn-34.git
+Dynos:          1
+Workers:        0
+Repo size:      4M
+Slug size:      8M
+Stack:          bamboo-ree-1.8.7
+Data size:      0K in 0 table
+Owner:          auraelius@gmail.com
+ganesh:test zim$ heroku open --app vivid-autumn-34
+Opening http://vivid-autumn-34.heroku.com/
+ganesh:test zim$ 
+
+This appears to act the same as my local app. I add a farm or two, udpate the README with the url of the heroku server, and push to github
+
+ganesh:test zim$ git commit -am'readme update'
+[master 3e5e38a] readme update
+ 1 files changed, 8 insertions(+), 4 deletions(-)
+ganesh:test zim$ git push origin master
+Counting objects: 5, done.
+Delta compression using up to 2 threads.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 454 bytes, done.
+Total 3 (delta 1), reused 0 (delta 0)
+To git@github.com:Auraelius/pgtest.git
+   07a0385..3e5e38a  master -> master
+ganesh:test zim$ 
+
+
+# Total time to this point: 05:15
+# 
+# Tomorrow, I do the assignment. Now, a dog walk.
+# 
+# Reboot. Did pg start automatically? Yep.
+# Installed Safari 5. Added browser check to plan.
+
+ganesh:sh zim$ rails -d postgresql convivo
+# output omitted
+ganesh:sh zim$ cd convivo
+ganesh:convivo zim$ cp ../test/.gitignore .
+ganesh:convivo zim$ script/generate rspec
+# output omitted
+ganesh:convivo zim$ script/generate cucumber --rspec --webrat
+# output omitted
+# edited environment.rb for gems
+ganesh:convivo zim$ git init
+Initialized empty Git repository in /Users/zim/dev/sh/convivo/.git/
+ganesh:convivo zim$ git add .
+ganesh:convivo zim$ git commit -m "Initial commit: environment definition underway"
+# output omitted
+
+# let's make sure the gem environment is built to specifications
+
+ganesh:convivo zim$ sudo rake gems:install
+(in /Users/zim/dev/sh/convivo)
+ganesh:convivo zim$ sudo rake gems:unpack:dependencies 
+(in /Users/zim/dev/sh/convivo)
+ganesh:convivo zim$ sudo rake gems:build
+(in /Users/zim/dev/sh/convivo)
+ganesh:convivo zim$ git add .
+ganesh:convivo zim$ git status
+# On branch master
+nothing to commit (working directory clean)
+
+
+# Ok
+
+# setup autospec in separate shell, but got
+WARNING: Nokogiri was built against LibXML version 2.7.3, but has dynamically loaded 2.7.7
+# hopefully this won't be significant
+# rcov is already installed
+
+# [X] infrastructure - rspec, cucumber, autotest, rcov 
+
+additional time for this: 01:00
+
+
+# Next:
+# [] data model & migrations with rspec scaffolding for simple controllers and views
+
+# check database.yaml - replace unique role "convivo" with generic and unsecure "postgres"
+
+ganesh:convivo zim$ rake db:create
+
+ganesh:convivo zim$ script/plugin install http://repo.pragprog.com/svn/Public/plugins/annotate_models
+
+# yuck. this appears to be an old plugin. getting warning
+# DEPRECATION WARNING: Rake tasks in vendor/plugins/annotate_models/tasks are deprecated. Use lib/tasks instead. (called from /opt/local/lib/ruby/gems/1.8/gems/rails-2.3.8/lib/tasks/rails.rb:10)
+# replaced with gem annotate-2.4.0
+
+# 
+# Here's the data model
+# 
+# farmer
+# 	name:string
+# 	belongs_to :washing_station
+# 	has_many :farms
+# 
+# washing_station
+# 	name:string
+# 	code:string
+# 	has_many :farmers
+# 
+# farm
+# 	name:string
+# 	organic:boolean
+# 	latitude:float
+# 	longitude:float
+# 	altitude:float
+# 	belongs_to :organic_certifier		
+# 	belongs_to :farmer	
+# 
+# organic_certifier
+# 	name:string
+# 	code:string
+# 	has_many :farms
+
+# Ran scafolding for models # output omitted on all
+ganesh:convivo zim$ script/generate rspec_scaffold farmer name:string
+ganesh:convivo zim$ script/generate rspec_scaffold washing_station name:string code:string
+ganesh:convivo zim$ script/generate rspec_scaffold farm name:string organic:boolean	latitude:float longitude:float altitude:float
+ganesh:convivo zim$ script/generate rspec_scaffold organic_certifier name:string code:string
+
+# edited models to create relationships as shown above
+# edited migrations to add foreign keys
+
+# ran migrations
+ganesh:convivo zim$ rake db:migrate
+# output omitted
+# verified that tables were created using pgadmin
+# played with relationship with script/console
+ganesh:convivo zim$ script/console
+Loading development environment (Rails 2.3.8)
+>> Farm.create(:name => "A Farm", :organic => true, :latitude => 400.0, :longitude => 200.0, :altitude => 2.3)
+=> #<Farm id: 1, name: "A Farm", organic: true, latitude: 400.0, longitude: 200.0, altitude: 2.3, farmer_id: nil, organic_certifier_id: nil, created_at: "2010-06-11 20:24:19", updated_at: "2010-06-11 20:24:19">
+>> OrganicCertifier.create( :name => "Organic Coffee You Can Trust", :code => "OCY")
+=> #<OrganicCertifier id: 1, name: "Organic Coffee You Can Trust", code: "OCY", created_at: "2010-06-11 20:24:28", updated_at: "2010-06-11 20:24:28">
+>> farm = Farm.find(1)
+=> #<Farm id: 1, name: "A Farm", organic: true, latitude: 400.0, longitude: 200.0, altitude: 2.3, farmer_id: nil, organic_certifier_id: nil, created_at: "2010-06-11 20:24:19", updated_at: "2010-06-11 20:24:19">
+>>  o=OrganicCertifier.find(1)
+=> #<OrganicCertifier id: 1, name: "Organic Coffee You Can Trust", code: "OCY", created_at: "2010-06-11 20:24:28", updated_at: "2010-06-11 20:24:28">
+>> 
+?> 
+?> 
+?> puts o.name
+Organic Coffee You Can Trust
+=> nil
+>>  farm.organic_certifier = o
+=> #<OrganicCertifier id: 1, name: "Organic Coffee You Can Trust", code: "OCY", created_at: "2010-06-11 20:24:28", updated_at: "2010-06-11 20:24:28">
+>> farm.save
+=> true
+>> quit
+# verified that tables were saved using pgadmin
+# added, committed
+
+# update views to allow associations
+# added some simple css styles to make things more readable
+# added some debug aids in application.html.erb layout
+# git added, commit
+# cleaned up data a little. Fixed a bug.
+ganesh:convivo zim$ git commit -am 'Fixed small bug, setup root route'
+[master 7e21d72] Fixed small bug, setup root route
+ 3 files changed, 8 insertions(+), 3 deletions(-)
+ rename public/{index.html => railsinfo.html} (100%)
+
+# created repo on github
+ganesh:convivo zim$ git remote add origin git@github.com:Auraelius/Convivo.git
+ganesh:convivo zim$   git push origin master
+Identity added: /Users/zim/.ssh/id_rsa (/Users/zim/.ssh/id_rsa)
+Counting objects: 250, done.
+Delta compression using up to 2 threads.
+Compressing objects: 100% (229/229), done.
+Writing objects: 100% (250/250), 336.47 KiB, done.
+Total 250 (delta 89), reused 0 (delta 0)
+To git@github.com:Auraelius/Convivo.git
+ * [new branch]      master -> master
+ganesh:convivo zim$ 
+
+ 
+ganesh:convivo zim$ git add .gems
+ganesh:convivo zim$ git commit -a -m "Added a .gems file to use Rails 2.3.8"
+ganesh:convivo zim$ git push origin master
+
+
+ganesh:convivo zim$  heroku create --stack bamboo-ree-1.8.7 --remote trybamboo
+Creating floating-autumn-62.... done
+Created http://floating-autumn-62.heroku.com/ | git@heroku.com:floating-autumn-62.git
+Git remote trybamboo added
+
+ganesh:convivo zim$ git push trybamboo master
+Counting objects: 256, done.
+Delta compression using up to 2 threads.
+Compressing objects: 100% (233/233), done.
+Writing objects: 100% (256/256), 338.75 KiB, done.
+Total 256 (delta 90), reused 0 (delta 0)
+
+-----> Heroku receiving push
+-----> Rails app detected
+
+-----> Installing gem rails 2.3.8 from http://rubygems.org
+       Successfully installed activesupport-2.3.8
+       Successfully installed activerecord-2.3.8
+       Successfully installed rack-1.1.0
+       Successfully installed actionpack-2.3.8
+       Successfully installed actionmailer-2.3.8
+       Successfully installed activeresource-2.3.8
+       Successfully installed rails-2.3.8
+       7 gems installed
+
+-----> Installing gem pg from http://rubygems.org
+       Building native extensions.  This could take a while...
+       Successfully installed pg-0.9.0
+       1 gem installed
+
+       Compiled slug size is 8.5MB
+-----> Launching......... done
+       http://floating-autumn-62.heroku.com deployed to Heroku
+
+To git@heroku.com:floating-autumn-62.git
+ * [new branch]      master -> master
+
+ganesh:convivo zim$ heroku rake db:create --app floating-autumn-62
+qyggmftvbo already exists
+(in /disk1/home/slugs/209286_1f385e2_b3f0/mnt)
+
+ganesh:convivo zim$ heroku rake db:migrate --app floating-autumn-62
+(in /disk1/home/slugs/209286_1f385e2_b3f0/mnt)
+==  CreateWashingStations: migrating ==========================================
+-- create_table(:washing_stations)
+   -> 0.0281s
+==  CreateWashingStations: migrated (0.0282s) =================================
+
+==  CreateFarms: migrating ====================================================
+-- create_table(:farms)
+   -> 0.0126s
+==  CreateFarms: migrated (0.0126s) ===========================================
+
+==  CreateFarmers: migrating ==================================================
+-- create_table(:farmers)
+   -> 0.0062s
+==  CreateFarmers: migrated (0.0063s) =========================================
+
+==  CreateOrganicCertifiers: migrating ========================================
+-- create_table(:organic_certifiers)
+   -> 0.0162s
+==  CreateOrganicCertifiers: migrated (0.0162s) ===============================
+
+ganesh:convivo zim$ 
+
+
+ganesh:convivo zim$ heroku db:push --app floating-autumn-62
+Loaded Taps v0.3.9
+Auto-detected local database: postgres://postgres@127.0.0.1/convivo_development?encoding=utf8
+Warning: Data in the app 'floating-autumn-62' will be overwritten and will not be recoverable.
+Are you sure you wish to continue? (y/n)? y
+Sending schema
+Schema:        100% |==========================================| Time: 00:00:06
+Sending indexes
+schema_migrat: 100% |==========================================| Time: 00:00:00
+Sending data
+5 tables, 19 records
+farms:         100% |==========================================| Time: 00:00:00
+schema_migrat: 100% |==========================================| Time: 00:00:00
+washing_stati: 100% |==========================================| Time: 00:00:00
+organic_certi: 100% |==========================================| Time: 00:00:00
+farmers:       100% |==========================================| Time: 00:00:00
+Resetting sequences
+ganesh:convivo zim$ heroku open --app floating-autumn-62
+Opening http://floating-autumn-62.heroku.com/
+
+# Time to complete iteration after setup 05:00
+# 
+# Next iteration: Sorting columns.
+# Found a jquery plugin called "tablesorter" at http://tablesorter.com/
+# It's licensed under MIT
+# Added javascript to public/javascripts
+# created a custom layout for farms
+# modified class and id of index view table, added <thead>, <tbody> tags
+# 
+# Time to success on farm index: one hour.
+# 
+# Modified indexes for Farmers, Certifiers, WashingStations along the same lines as Farms. +00:30 minutes
+# deployed to github & heroku
+
+ganesh:convivo zim$ git add .
+ganesh:convivo zim$ git commit -m"Added table sorting to four index views"
+ganesh:convivo zim$ git push origin master
+ganesh:convivo zim$ git push trybamboo master
+ganesh:convivo zim$ heroku db:push --app floating-autumn-62
+ganesh:convivo zim$ heroku open --app floating-autumn-62
+
+#Heroku was slower than yesterday. Deploy time: +00:15
+
+
+# Next, add validations
+# Names generally are not unique. So we basically need to check codes
+# and not allow an organic certifier if the farm is not organic. We'll check the latter at the model
+# and also design the form so that it can't be selected unless the organic checkbox is set
+# 
+# for organic_certifiers and washing_stations, code should be unique, three capital letters
+# 
+# validates_format_of :code,
+#   :with	=> /[A-Z]{3}/, 
+#   :message => "must use three capital letters"
+# 
+# validates_uniqueness_of :code, :case_sensitive => true
+# validates_presence_of :name, :code  
+# 
+# 
+# for protection against simultaneous update with the same code, 
+# add a migration that uses code as an index and requires it to be unique
+# TODO: add exception-handling code to gracefully guide the user through correcting the problem
+# How do I test this?
+# 
+# class AddCodeUniquenessIndex < ActiveRecord::Migration
+#   def self.up
+#     add_index :organic_certifiers, :code, :unique => true
+#     add_index :washing_stations, :code, :unique => true
+#   end
+# 
+#   def self.down
+#     remove_index :organic_certifiers, :code
+#     remove_index :washing_stations, :code
+# 
+#   end
+# end
+
+ganesh:convivo zim$ script/generate migration OC_and_WS_code_must_be_unique
+      exists  db/migrate
+      create  db/migrate/20100613143207_oc_and_ws_code_must_be_unique.rb
+ganesh:convivo zim$ rake db:migrate
+(in /Users/zim/dev/sh/convivo)
+==  OcAndWsCodeMustBeUnique: migrating ========================================
+-- add_index(:organic_certifiers, :code, {:unique=>true})
+   -> 0.1019s
+-- add_index(:washing_stations, :code, {:unique=>true})
+   -> 0.0044s
+==  OcAndWsCodeMustBeUnique: migrated (0.1066s) ===============================
+
+# updated organic_certifier specs to use three character codes
+ganesh:~ zim$ cd dev/sh/convivo/spec/models
+ganesh:models zim$ rake db:test:prepare
+# output omitted
+ganesh:models zim$ spec .
+.....F.
+
+1)
+'OrganicCertifier should require a three character code' FAILED
+expected #<OrganicCertifier id: nil, name: "value for name", code: "XXXX", created_at: nil, updated_at: nil> not to be valid
+/Users/zim/dev/sh/convivo/spec/models/organic_certifier_spec.rb:47:
+
+Finished in 0.094376 seconds
+
+7 examples, 1 failure
+
+# yikes! My regex skills aren't up to snuff, apparently. Use a sledgehammer by adding the following validation
+# 
+# validates_length_of :code,
+#   :is => 3,   
+
+ganesh:models zim$ spec .
+.......
+
+Finished in 0.132192 seconds
+
+7 examples, 0 failures
+
+# that's better
+
+# add washing_station specs
+ganesh:models zim$ spec .
+............
+
+Finished in 0.121013 seconds
+
+12 examples, 0 failures
+
+# Now, how to do interaction of organic==true and specifying an organic_certifier?
+# 
+# You can't create or update a farm with organic_certifier set if organic!=true
+# However, can a farm be organic and not certified?
+# 
+# I understand how to validate that the certifier must be present if organic==true, but not the reverse.
+# Attempts at writing my own validator are running into problems.
+# 
+# Let's make it possible to enter a certifier only if organic is checked up at the client.
+# 
+# Added <div> for certifier selector and javascript to display it only if organic checkbox is set
+# on farm new and edit views. Added validate to make sure a certifier is selected if the farm is organic.
+
+# Modified farm controller update action to remove organic_certifier if organic is not set
+
+# adding validations and tests for farm model
+# I notice that the new farm form crashes when incomplete after I add validations- I hadn't seen this before because I always filled in the form completely. Ah! I'm not creating the arrays in the controller that the view needs to fill in the selectors when it returns to the form and reports the error during the create and update actions. Fixed.
+
+# Added validations and rspec tests for all models
+# played with controller and view rspecs, but initial attempts didn't produce results fast enough
+
+# checked out most of the functions in Firefox 3.5.8, Internet Explorer 7. 
+# Javascript works. Menu links are not underlined in IE7
+# 
+# [X] conditional forms 
+# [X] validations & tests
+# [X] check on FireFox, IE7, fix anomolies
+# 
+# Time for this iteration: 07:15
+
+ganesh:convivo zim$ git add .
+ganesh:convivo zim$ git commit 
+ganesh:convivo zim$ git push origin master
+ganesh:convivo zim$ git push trybamboo master
+ganesh:convivo zim$ heroku db:push --app floating-autumn-62
+ganesh:convivo zim$ heroku open --app floating-autumn-62
+
+# looked at rcov - as expected, pretty high coverage because of the scaffold tests
+# 
+# Hmmm... environment.rb doesn't have the gem spec. My notes indicate that I modified it and checked that in.
+# Fixed, pushed along with minor file updates for documentation.
+# 
+# Writing status update email to Debra and Oscar:
