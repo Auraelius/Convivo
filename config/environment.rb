@@ -20,6 +20,29 @@ Rails::Initializer.run do |config|
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"
 
+  # development and test environments
+   config.gem "autotest",         :version => '4.2.10',  :environment => [:development, :test], :lib => false
+   config.gem "autotest-growl",   :version => '0.2.4',  :environment => [:development, :test], :lib => false
+   config.gem "autotest-rails",   :version => '4.1.0',  :environment => [:development, :test], :lib => false
+   config.gem "redgreen",         :version => '1.2.2',  :environment => [:development, :test], :lib => false
+   config.gem "ZenTest",          :version => '4.3.2',  :environment => [:development, :test], :lib => false
+   config.gem "rspec",            :version => '1.3.0',  :environment => [:development, :test], :lib => false
+   config.gem "rspec-rails",      :version => '1.3.2',  :environment => [:development, :test], :lib => false
+   config.gem "cucumber",         :version => '0.8.0',  :environment => [:development, :test], :lib => false
+   config.gem "cucumber-rails",   :version => '0.3.2',  :environment => [:development, :test], :lib => false
+   config.gem "database_cleaner", :version => '0.5.2',  :environment => [:development, :test], :lib => false
+   config.gem "webrat",           :version => '0.7.1',  :environment => [:development, :test], :lib => false
+   config.gem "selenium-client",  :version => '1.2.18', :environment => [:development, :test], :lib => false
+   config.gem "annotate",         :version => '2.4.0',  :environment => [:development, :test], :lib => false
+
+   # documentation and other development stuff
+   config.gem "rdoc", :version => '2.5.8', :environment => :development, :lib => false
+
+
+   # all environments
+   config.gem "pg", :version => '0.9.0', :lib => false
+
+
   # Only load the plugins named here, in the order given (default is alphabetical).
   # :all can be used as a placeholder for all plugins not explicitly named
   # config.plugins = [ :exception_notification, :ssl_requirement, :all ]
